@@ -1,0 +1,6 @@
+qrcode[pil]
+flask
+uuid
+requests
+json
+airtable-python-wrapper
