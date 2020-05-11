@@ -8,10 +8,10 @@ from airtable import Airtable
 with open("config.json") as f:
     config = json.load(f);
     airtable_auth_key = config["airtable_auth_key"]
-    base_key = config["base_key"]
+    base_key = config["base_key"] 
 
 class GPQRGen():
-    def __init__(self, domain, amount):
+    def __init__(self, domain, amount=20):
         newUUID = uuid.uuid4()
         
         #Writes the info to the Airtable base
