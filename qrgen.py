@@ -12,23 +12,27 @@ with open("config.json") as f:
 
 class GPQRGen():
     def __init__(self, domain, amount=20):
-        newUUID = uuid.uuid4()
+        self.newUUID = str(uuid.uuid4())
         
         #Writes the info to the Airtable base
         airtable = Airtable(base_key, "Coin Claims", api_key=airtable_auth_key)
         record = {
-            "UUID": str(newUUID),
+            "UUID": self.newUUID,
             "Amount": amount,
             "Claimant Slack Email": ""
         }
         airtable.insert(record)
         
         #Creating the link
-        self.link = f"{domain}/claim?uuid={newUUID}&amount={amount}"
+        self.link = f"{domain}/claim?uuid={self.newUUID}&amount={amount}"
     
-    def link(self):
+    def getlink(self):
         return self.link
+
+    def getUUID(self):
+        return self.newUUID
     
     def generate(self):
-        img = qrcode.make(self.link())
+        img = qrcode.make(self.getlink())
+        img.save(f"static/{self.getUUID()}.png")
         return img;

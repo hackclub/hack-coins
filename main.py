@@ -34,11 +34,27 @@ def generate():
         username = admin_record[0]["fields"]["Slack Tag"]
     except KeyError:
         logged_in = False
+        
+    if request.method == 'POST':
+        amount = request.form.get("amount")
+        flask.session["amount"] = int(amount)
+        return redirect("/qrcode")
     
     if not logged_in:
         return render_template("adminlogin.html", clientId=client_id)
     else:
         return render_template("generate.html", name=username)
+    
+@app.route("/qrcode", methods=["GET", "POST"])
+def qrcode():
+    #Generates the QR Code
+    gen = GPQRGen("http://localhost:3000", flask.session["amount"])
+    gpqrcode = gen.generate()
+    qrcodeUUID = gen.getUUID()
+    
+    #Outputs the QR Code, ready to scan
+    src = f"static/{qrcodeUUID}.png"
+    return render_template("qrcode.html", source=src)
 
 @app.route("/slackredirect", methods=["GET", "POST"])
 def slackredirect():
@@ -82,8 +98,9 @@ def slackredirect():
 @app.route("/claim", methods=["GET", "POST"])
 def claim():
     uuid = request.args.get("uuid")
+    amount = request.args.get("amount")
     
-    return ("Testing 123, uuid: " + uuid, 200) #you return an http request like this
+    
 
 if __name__ == '__main__': #this checks that it's actually you running main.py not an import
     app.run(host='0.0.0.0', debug=True, port=3000) #this tells flask to go
