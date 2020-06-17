@@ -27,6 +27,7 @@ admin_base = Airtable(base_key, "Verified Generators", api_key=airtable_auth_key
 def index():
     return ("This is the index.", 200)
 
+#Admin start here!
 @app.route("/generate", methods=["GET", "POST"])
 def generate():
     #Making sure that admin has logged in before
@@ -131,6 +132,7 @@ def user_slackredirect():
     #Taking user back to the generator page
     return redirect("/claimed")
 
+#Users, once they scan their QR codes, end up here and go from here!
 @app.route("/claim", methods=["GET", "POST"])
 def claim():
     uuid = request.args.get("uuid")
