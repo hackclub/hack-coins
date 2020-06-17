@@ -50,7 +50,7 @@ def generate():
 @app.route("/qrcode", methods=["GET", "POST"])
 def qrcode():
     #Generates the QR Code
-    gen = GPQRGen("http://localhost:3000", flask.session["amount"])
+    gen = GPQRGen("http://0.0.0.0:3000", flask.session["amount"])
     gpqrcode = gen.generate()
     qrcodeUUID = gen.getUUID()
     
@@ -180,4 +180,4 @@ def claimed():
     return ("Done! Check Slack for your new gp!", 200)
 
 if __name__ == '__main__': #this checks that it's actually you running main.py not an import
-    app.run(host='0.0.0.0', debug=True, port=3000) #this tells flask to go
+    app.run(host='0.0.0.0', debug=False, port=3000) #this tells flask to go
