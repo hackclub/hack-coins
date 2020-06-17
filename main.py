@@ -13,6 +13,8 @@ with open("config.json") as f:
     client_id = config["client_id"]
     clientSecret = config["client_secret"]
     secretKey = config["secret_key"]
+    botUserId = config["softbank_user_id"]
+    snekCoin_API_Key = config["snekCoin_API_Key"]
 
 app = Flask(__name__)
 app.secret_key = secretKey
@@ -152,6 +154,7 @@ def taken():
 def claimed():
     #Updating the database that the user has claimed their prize
     userEmail = flask.session["user"]["authdict"]["email"]
+    userId = flask.session["user"]["authdict"]["id"]
     uuid = flask.session["user"]["uuid"];
     #Getting the record of the matched uuid
     record = claims_base.match("UUID", uuid)
@@ -162,7 +165,16 @@ def claimed():
         "Claimant Slack Email": userEmail
     })
     
-    #Here, the bot gives GP and AnkCoin to the user
+    #The bot gives all the currencies to the user
+    #Snekcoin
+    requests.post("www.ankbot.net/api/transfer", {
+        "payer": botUserId,
+        "receiver": userId,
+        "amount": flask.session["user"]["amount"],
+        "key": snekCoin_API_Key
+    })
+    #GP
+    #TODO
     
     #Done
     return ("Done! Check Slack for your new gp!", 200)
