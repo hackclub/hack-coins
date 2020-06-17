@@ -105,12 +105,67 @@ def notadmin():
 
 @app.route("/slackredirect", methods=["GET", "POST"])
 def user_slackredirect():
-    pass
+    authcode = request.args.get("code")
+    authresponse = json.loads(requests.get(f"https://slack.com/api/oauth.v2.access?client_id={client_id}&client_secret={clientSecret}&code={authcode}").content)
+    if authresponse["ok"]:
+        accessToken = authresponse["authed_user"]["access_token"]
+    else:
+        redirect("/404")
+    
+    #Getting the user's info
+    userresponse = json.loads(requests.get(f"https://slack.com/api/users.identity.email?token={accessToken}").content)
+    if userresponse["ok"]:
+        userid = userresponse["user"]["id"]
+        username = userresponse["user"]["name"]
+        userEmail = userresponse["user"]["email"]
+        flask.session["user"]["authdict"] = {
+            "id": userid,
+            "name": username,
+            "email": userEmail
+        }
+    else:
+        return redirect("/404")
+        
+    #Taking user back to the generator page
+    return redirect("/claimed")
 
 @app.route("/claim", methods=["GET", "POST"])
 def claim():
     uuid = request.args.get("uuid")
     amount = request.args.get("amount")
+    
+    flask.session["user"]["uuid"] = uuid
+    flask.session["user"]["amount"] = amount
+    
+    #Checking if the QR Code has been claimed already
+    record = claims_base.match("UUID", uuid)
+    if (record["fields"]["Claimant Slack Email"]):
+        return redirect("/taken")
+    
+    return redirect("/user_slackredirect")
+
+@app.route("/taken", methods=["GET", "POST"])
+def taken():
+    return ("This QR code has been scanned already, and as such, the gp has been claimed. Sorry!", 200)
+    
+@app.route("/claimed", methods=["GET", "POST"])
+def claimed():
+    #Updating the database that the user has claimed their prize
+    userEmail = flask.session["user"]["authdict"]["email"]
+    uuid = flask.session["user"]["uuid"];
+    #Getting the record of the matched uuid
+    record = claims_base.match("UUID", uuid)
+    #Updating the record with the collected email
+    claims_base.update(record[id], {
+        "UUID": uuid,
+        "Amount": flask.session["user"]["amount"],
+        "Claimant Slack Email": userEmail
+    })
+    
+    #Here, the bot gives GP and AnkCoin to the user
+    
+    #Done
+    return ("Done! Check Slack for your new gp!", 200)
 
 if __name__ == '__main__': #this checks that it's actually you running main.py not an import
     app.run(host='0.0.0.0', debug=True, port=3000) #this tells flask to go
