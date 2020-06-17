@@ -35,4 +35,3 @@ class GPQRGen():
     def generate(self):
         img = qrcode.make(self.getlink())
         img.save(f"static/{self.getUUID()}.png")
-        return img;

@@ -56,8 +56,8 @@ def qrcode():
     src = f"static/{qrcodeUUID}.png"
     return render_template("qrcode.html", source=src)
 
-@app.route("/slackredirect", methods=["GET", "POST"])
-def slackredirect():
+@app.route("/admin-slackredirect", methods=["GET", "POST"])
+def admin_slackredirect():
     authcode = request.args.get("code")
     authresponse = json.loads(requests.get(f"https://slack.com/api/oauth.v2.access?client_id={client_id}&client_secret={clientSecret}&code={authcode}").content)
     accessToken = ""
@@ -95,12 +95,22 @@ def slackredirect():
     #Taking user back to the generator page
     return redirect("/generate")
 
+@app.route("/404", methods=["GET", "POST"])
+def fourOfour():
+    return ("404 Not Found", 404)
+
+@app.route("/notadmin", methods=["GET", "POST"])
+def notadmin():
+    return ("You're not an admin; contact @Harshith on Hack Club Slack for more info.", 200)
+
+@app.route("/slackredirect", methods=["GET", "POST"])
+def user_slackredirect():
+    pass
+
 @app.route("/claim", methods=["GET", "POST"])
 def claim():
     uuid = request.args.get("uuid")
     amount = request.args.get("amount")
-    
-    
 
 if __name__ == '__main__': #this checks that it's actually you running main.py not an import
     app.run(host='0.0.0.0', debug=True, port=3000) #this tells flask to go
