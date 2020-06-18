@@ -12,8 +12,7 @@ base_key = os.environ["base_key"]
 client_id = os.environ["client_id"]
 clientSecret = os.environ["client_secret"]
 secretKey = os.environ["secret_key"]
-botUserId = os.environ["softbank_user_id"]
-snekCoin_API_Key = os.environ["snekCoin_API_Key"]
+softbank_api_key = os.environ["softbank_api_key"]
 
 app = Flask(__name__)
 app.secret_key = secretKey
@@ -181,15 +180,11 @@ def claimed():
     })
 
     # The bot gives all the currencies to the user
-    # Snekcoin
-    requests.post("www.ankbot.net/api/transfer", {
-        "payer": botUserId,
-        "receiver": userId,
+    requests.post("https://softbank.codered.cloud/hackcoin/redeem", {
+        "auth": softbank_api_key,
         "amount": flask.session["user"]["amount"],
-        "key": snekCoin_API_Key
+        "user": userId
     })
-    # GP
-    # TODO
 
     # Done
     return ("Done! Check Slack for your new gp!", 200)
