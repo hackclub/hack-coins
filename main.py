@@ -31,8 +31,7 @@ def index():
 def generate():
     # Making sure that admin has logged in before
     try:
-        admin_record = admin_base.search(
-            "Slack Tag", flask.session["authdict"]["name"])
+        admin_record = admin_base.search("Slack Tag", flask.session["authdict"]["name"])
         logged_in = admin_record[0]["fields"]["Logged In?"]
         username = admin_record[0]["fields"]["Slack Tag"]
     except KeyError:
@@ -86,14 +85,12 @@ def admin_slackredirect():
         # Updating that the user has logged in before
         try:
             print(username)
-            record = admin_base.match("Slack Tag", username)
+            record = admin_base.match("User ID", userid)
             print(record)
         except KeyError:
             return redirect("/notadmin")
 
         admin_base.update(record["id"], {
-            "Slack Tag": username,
-            "Affiliation": record["fields"]["Affiliation"],
             "Logged In?": True
         })
     else:
