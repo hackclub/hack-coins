@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "hack-coins"
 version = "0.1.0"
-description = ""
+description = "A website that generates a QR code that, when scanned, gifts GP and Ankcoin to the scanner on the Hack Club Slack."
 authors = ["harbar20 <harbar2021@gmail.com>"]
 license = "MIT"
 
