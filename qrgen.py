@@ -18,8 +18,7 @@ class GPQRGen():
         airtable = Airtable(base_key, "Coin Claims", api_key=airtable_auth_key)
         record = {
             "UUID": self.newUUID,
-            "Amount": amount,
-            "Claimant Slack Email": ""
+            "Amount": amount
         }
         airtable.insert(record)
 
