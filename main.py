@@ -19,8 +19,7 @@ app.secret_key = secretKey
 
 # Airtable bases
 claims_base = Airtable(base_key, "Coin Claims", api_key=airtable_auth_key)
-admin_base = Airtable(base_key, "Verified Generators",
-                      api_key=airtable_auth_key)
+admin_base = Airtable(base_key, "Verified Generators", api_key=airtable_auth_key)
 
 
 @app.route("/", methods=["GET", "POST"])
