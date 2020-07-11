@@ -1,0 +1,18 @@
+{
+	"schemaVersion": 2,
+	"dockerfileLines": [
+		"FROM python:3.8.2-alpine",
+		"RUN mkdir -p /usr/src/app",
+		"WORKDIR /usr/src/app",
+		"COPY ./pyproject.toml /usr/src/app",
+		"COPY ./poetry.lock /usr/src/app",
+		"RUN apk add --no-cache --virtual .build-deps gcc musl-dev git python3-dev openssl-dev libffi-dev",
+		"RUN pip3 install poetry",
+		"RUN poetry config virtualenvs.create false",
+		"RUN poetry install",
+		"RUN apk del .build-deps",
+		"COPY ./ /usr/src/app",
+		"EXPOSE 3000",
+		"CMD [ \"python3\", \"main.py\" ]"
+	]
+}
