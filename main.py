@@ -13,6 +13,7 @@ client_id = os.environ["client_id"]
 clientSecret = os.environ["client_secret"]
 secretKey = os.environ["secret_key"]
 softbank_api_key = os.environ["softbank_api_key"]
+qrgen_url = os.environ["qrgen_url"]
 
 app = Flask(__name__)
 app.secret_key = secretKey
@@ -51,7 +52,7 @@ def generate():
 @app.route("/qrcode", methods=["GET", "POST"])
 def qrcode():
     # Generates the QR Code
-    gen = GPQRGen("http://0.0.0.0:3000", flask.session["amount"])
+    gen = GPQRGen(qrgen_url, flask.session["amount"])
     gpqrcode = gen.generate()
     qrcodeUUID = gen.getUUID()
 
